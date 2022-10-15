@@ -46,3 +46,9 @@ accel_data %>%
   ggplot(aes(x=activity_min,y=activity_count,color=day_id))+
   geom_line()+geom_point(alpha=0.3)+viridis::scale_color_viridis(name='day_id')
 ```
+
+**Question 3**
+```{r}
+library(p8105.datasets) 
+data("ny_noaa")
+```
