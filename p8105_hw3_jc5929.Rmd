@@ -59,19 +59,12 @@ ny_data= ny_noaa %>%
 
 jan_plot= 
     ny_data %>%
-  filter(month=='01') %>%
+  filter(month=='01'|month=='07') %>%
   drop_na(tmax) %>%
-  group_by(year,id) %>%
+  group_by(year,id,month) %>%
   summarize(tmax_average=mean(tmax)) %>%
-  ggplot(aes(x=year,y=tmax_average))+geom_point(color='steelblue')
-
-jul_plot=ny_data %>%
-  mutate(month=as.character(month)) %>%
-  filter(month=='07') %>%
-  drop_na(tmax) %>%
-  group_by(year,id) %>%
-  summarize(tmax_average=mean(tmax)) %>%
-  ggplot(aes(x=year,y=tmax_average))+geom_point(color='pink')
+  ggplot(aes(x=year,y=tmax_average,color=month)) +geom_point()+
+  facet_grid(.~month)
 
 jan_plot+jul_plot
 
@@ -80,9 +73,8 @@ plot1= ny_data %>%
   
 plot2 = ny_data %>%
     filter(snow>0 & snow<100) %>%
-    group_by(year) %>%
-    summarize(snowfall=sum(snow)) %>%
-    ggplot(aes(x=year,y=snowfall))+geom_col(color='steelblue')
+    ggplot(aes(x=snow,fill=year))+geom_density(alpha=0.4,adjust=0.5,
+                                               color='yellow')
  
 plot1+plot2
 
