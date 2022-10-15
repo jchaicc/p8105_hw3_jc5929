@@ -17,6 +17,22 @@ library(patchwork)
 library(dplyr)
 library(knitr)
 accel_data=read_csv("data/accel_data.csv") %>%
-  janitor::clean_names()
-
+  janitor::clean_names() %>%
+  pivot_longer(
+    activity_1:activity_1440,
+    names_to = 'activity_min',
+    values_to = 'activity_count',
+    names_prefix = 'activity_'
+  )  %>%
+mutate(activity_count=round(activity_count,2)) %>%
+  mutate(day_type=
+        case_when(
+     day== 'Monday' ~ 'weekday',
+     day== 'Tuesday' ~ 'weekday',
+     day== 'Wednesday' ~ 'weekday',
+     day== 'Thursday' ~ 'weekday',
+     day== 'Friday' ~ 'weekday',
+     day== 'Saturday' ~ 'weekend',
+     day== 'Sunday' ~ 'weekend')
+   )
 ```
