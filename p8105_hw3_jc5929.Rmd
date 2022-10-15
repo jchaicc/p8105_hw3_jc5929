@@ -51,4 +51,10 @@ accel_data %>%
 ```{r}
 library(p8105.datasets) 
 data("ny_noaa")
+ny_data= ny_noaa %>%
+  janitor::clean_names() %>%
+  mutate(date=as.character(date)) %>%
+  separate(date,into=c('year','month','date'),sep='-') %>%
+  mutate(tmax=as.numeric(tmax),tmin=as.numeric(tmin)) 
+
 ```
