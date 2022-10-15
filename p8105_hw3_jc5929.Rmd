@@ -35,4 +35,15 @@ mutate(activity_count=round(activity_count,2)) %>%
      day== 'Saturday' ~ 'weekend',
      day== 'Sunday' ~ 'weekend')
    )
+accel_data %>%
+  group_by(day_id) %>%
+  summarize(n_obs=n(),
+            total_activity=sum(activity_count)) %>%
+  knitr::kable()
+
+
+accel_data %>%
+  group_by(week) %>%
+  ggplot(aes(x=activity_min,y=activity_count,color=day_id))+
+  geom_line()+geom_point(alpha=0.5)+viridis::scale_color_viridis(name='day_id')
 ```
