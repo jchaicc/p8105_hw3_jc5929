@@ -75,6 +75,18 @@ jul_plot=ny_data %>%
 
 jan_plot+jul_plot
 
+plot1= ny_data %>%
+    ggplot(aes(x=tmin,y=tmax))+geom_hex()
+  
+plot2 = ny_data %>%
+    filter(snow>0 & snow<100) %>%
+    group_by(year) %>%
+    summarize(snowfall=sum(snow)) %>%
+    ggplot(aes(x=year,y=snowfall))+geom_col(color='steelblue')
+ 
+plot1+plot2
+
+
 
 
 ```
