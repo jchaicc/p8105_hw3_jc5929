@@ -129,7 +129,7 @@ plot1= ny_data %>%
 plot2 = ny_data %>%
     filter(snow>0 & snow<100) %>%
     ggplot(aes(x=snow,fill=year))+geom_density(alpha=0.3,adjust=0.5,
-                                               color='yellow')
+                                               color='yellow')+
  
 plot1+plot2
 
