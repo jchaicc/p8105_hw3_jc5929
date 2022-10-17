@@ -234,12 +234,20 @@ taller than in July.
 
 ```{r}
 plot1= ny_data %>%
-    ggplot(aes(x=tmin,y=tmax))+geom_hex()
+    ggplot(aes(x=tmin,y=tmax))+geom_hex()+labs(
+    title = "NY Temperatures (1981-2010)",
+    x = "Min Temp (°C)",
+    y = "Max Temp (°C)"
+  )
   
 plot2 = ny_data %>%
     filter(snow>0 & snow<100) %>%
     ggplot(aes(x=snow,fill=year))+geom_density(alpha=0.3,adjust=0.5,
-                                               color='yellow')
+                                               color='yellow')+ 
+  labs(
+    title = "NY Snowfall Values, 0-100mm (1981-2010)",
+    x = "Snowfall (mm)",
+  )
  
 plot1+plot2
 ```
