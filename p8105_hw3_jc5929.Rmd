@@ -146,31 +146,6 @@ from around 8pm to 10pm, especially on Fridays and Saturdays.
 **Question 3**
 ```{r}
 data("ny_noaa")
-
-month_plot= 
-    ny_data %>%
-  filter(month=='01'|month=='07') %>%
-  drop_na(tmax) %>%
-  group_by(year,id,month) %>%
-  summarize(tmax_average=mean(tmax)) %>%
-  ggplot(aes(x=year,y=tmax_average,color=month)) +geom_point(alpha=0.3)+
-  facet_grid(.~month)+theme(axis.text.x = element_text(angle = 60, hjust = 1))
-
-month_plot
-
-plot1= ny_data %>%
-    ggplot(aes(x=tmin,y=tmax))+geom_hex()
-  
-plot2 = ny_data %>%
-    filter(snow>0 & snow<100) %>%
-    ggplot(aes(x=snow,fill=year))+geom_density(alpha=0.3,adjust=0.5,
-                                               color='yellow')
- 
-plot1+plot2
-
-
-
-
 ```
 The ny_noaa data set contains `r nrow(ny_noaa)` rows and `r ncol(ny_noaa)` columns.
 Some key varibales inlcudes:
@@ -211,7 +186,7 @@ ny_data= ny_noaa %>%
   separate(date,into=c('year','month','date'),sep='-') %>%
   mutate(tmax=as.numeric(tmax),
          tmin=as.numeric(tmin),
-         year=as.numeric(year),
+         year=as.factor(year),
          date=as.numeric(date),
          month=as.numeric(month), 
          prcp=prcp/10,
@@ -250,4 +225,29 @@ month_plot
 The average max temperature in January is within -10 to 10°C. The lowest turns 
 out to be about -13.5°C. There is no significant outliers in January.
 
-Averagr max temperature in July appears to be 25-30°C. There is  
+Average max temperature in July appears to be 25-30°C. There is one outlier where
+the max temoerature is about 14°C. 
+
+Comparing January and JUly, the average max temperature is lower than in July. 
+It also appear to to fluctuate more in January, as the range in Junuary is more
+taller than in July.
+
+```{r}
+plot1= ny_data %>%
+    ggplot(aes(x=tmin,y=tmax))+geom_hex()
+  
+plot2 = ny_data %>%
+    filter(snow>0 & snow<100) %>%
+    ggplot(aes(x=snow,fill=year))+geom_density(alpha=0.3,adjust=0.5,
+                                               color='yellow')
+ 
+plot1+plot2
+```
+The left hand side plot shows `tmax` vs `tmin` for the data set. This plot shows
+that most days have a max temperature of 25°C and a min temperature of 15°C.
+
+The plot on the right shows the distribution of snowfall values greater than 0
+and less than 100 separately by year. From the plot, we can see that there are
+multiple peaks, thus it has a multimodal distrbition.  
+
+
