@@ -94,14 +94,36 @@ mutate(activity_count=round(activity_count,2)) %>%
      day== 'Friday' ~ 'weekday',
      day== 'Saturday' ~ 'weekend',
      day== 'Sunday' ~ 'weekend')
-   )
+   ) %>%
+  mutate(activity_min=as.numeric(activity_min),day=as.factor(day), week=
+           as.integer(week))
+
+```
+The accel data set has `r nrow(accel_data)` rows and 6 columns. The data set 
+contains 5 weeks of accelerometer data from a 63 year-old male with BMI 25. The
+variables in this data set are week, day_id, day,activity_min, activity_count, 
+and day_type. 
+
+*_day_id_ is a `r class(pull(accel_data,day_id))` variable
+*_day_ is a `r class(pull(accel_data,day))` variable
+*_week_ is a `r class(pull(accel_data,week))` variable
+*_day_type_ is a `r class(pull(accel_data,day_type))` variable
+*_activity_min_ is a `r class(pull(accel_data,activity_min))` variable
+*_activity_count_ is a `r class(pull(accel_data,activity_count))` variable
+
+```{r}
 accel_data %>%
   group_by(day_id,week,day) %>%
   summarize(n_obs=n(),
             total_activity=sum(activity_count)) %>%
   knitr::kable()
+```
 
-  accel_data %>%
+Activity counts appears to have the lowest on the two Saturdays (week4 and 
+week5). 
+
+```{r}
+accel_data %>%
   mutate(activity_min=as.numeric(activity_min)) %>%
   ggplot(aes(x=activity_min,y=activity_count,color=day))+
   geom_line()+labs(title = "24-Hour Activity Count by Day",
@@ -114,16 +136,16 @@ accel_data %>%
     labels = c("12AM", "6AM", "12PM", "6PM", "11:59PM"),
     limits = c(0, 1440)
     )
+
 ```
+
+The plot shows that the activity count is lowest during sleeping hours, which is 
+from 12am to 6am. And the individual appears to be more active in the afternoon,
+from around 8pm to 10pm, especially on Fridays and Saturdays.
 
 **Question 3**
 ```{r}
 data("ny_noaa")
-ny_data= ny_noaa %>%
-  janitor::clean_names() %>%
-  mutate(date=as.character(date)) %>%
-  separate(date,into=c('year','month','date'),sep='-') %>%
-  mutate(tmax=as.numeric(tmax),tmin=as.numeric(tmin))
 
 month_plot= 
     ny_data %>%
@@ -150,3 +172,82 @@ plot1+plot2
 
 
 ```
+The ny_noaa data set contains `r nrow(ny_noaa)` rows and `r ncol(ny_noaa)` columns.
+Some key varibales inlcudes:
+*`id`: weather station id
+*`prcp`: Precipitation (tenths of mm)
+*`snow`: snowfall(mm)
+*`snwd`: snow depth (mm)
+*`tmax`: maximum temperature  (tenths of degrees C)
+*`tmin`: minimum temperature (tenths of degrees C)
+
+All variables were converted into standard units. `prcp`, was measured in tenths
+of mm, and was converted into mm.
+
+The belows shows infromation of the missing values of the data set.
+```{r}
+ missing_noaa=ny_noaa %>%
+  summarize(missing_prcp=sum(is.na(prcp)),
+            missing_snow=sum(is.na(snow)),
+            missing_snwd=sum(is.na(snwd)),
+            missing_tmax=sum(is.na(tmax)),
+            missing_tmin=sum(is.na(tmin))
+            ) %>%
+  knitr::kable()
+missing_noaa
+
+```
+ From the table, it is observed that there is quite a lot of missing data for 
+ `tamx` and `tmin`. tmax has about `r sum(is.na(ny_noaa$tmax))/nrow(ny_noaa)`% of 
+ missing values, and missing values foe tmin accounts approximately for 
+ `r sum(is.na(ny_noaa$tmin))/nrow(ny_noaa)`%. `snow` and `snwd` has relatively 
+ smaller proportion of missing values. If the data set has a large amount of 
+ missing values, it will casue bias, and could influence the accuracr for analysis.
+ 
+```{r}
+ny_data= ny_noaa %>%
+  janitor::clean_names() %>%
+  mutate(date=as.character(date)) %>%
+  separate(date,into=c('year','month','date'),sep='-') %>%
+  mutate(tmax=as.numeric(tmax),
+         tmin=as.numeric(tmin),
+         year=as.numeric(year),
+         date=as.numeric(date),
+         month=as.numeric(month), 
+         prcp=prcp/10,
+         tmax=tmax/10,
+         tmin=tmin/10
+         )
+
+ny_data %>% 
+  count(snow) %>%
+  arrange(desc(n))
+
+```
+ 
+ All variables were converted into standard units. `prcp`, was measured in tenths
+of mm, and was converted into mm. From the data set, it is seen that the most 
+commonly observed value for snowfall is 0, which means that most days in nyc, it
+is not snowing. Since snowy days only occur in some winter days.
+ 
+```{r}
+month_plot= 
+    ny_data %>%
+  filter(month=='01'|month=='07') %>%
+  drop_na(tmax) %>%
+  group_by(year,id,month) %>%
+  summarize(tmax_average=mean(tmax)) %>%
+  ggplot(aes(x=year,y=tmax_average,color=month)) +geom_point(alpha=0.3)+
+  facet_grid(.~month)+labs(
+    title = "Avg Max Temp in January and July in each NY Station Across Years",
+    x = "Year",
+    y = "Temp (°C)",
+    caption = "Data from the NOAA dataset"
+  )+theme(axis.text.x = element_text(angle = 60, hjust = 1))
+
+month_plot
+```
+The average max temperature in January is within -10 to 10°C. The lowest turns 
+out to be about -13.5°C. There is no significant outliers in January.
+
+Averagr max temperature in July appears to be 25-30°C. There is  
