@@ -104,12 +104,22 @@ contains 5 weeks of accelerometer data from a 63 year-old male with BMI 25. The
 variables in this data set are week, day_id, day,activity_min, activity_count, 
 and day_type. 
 
-*_day_id_ is a `r class(pull(accel_data,day_id))` variable
-*_day_ is a `r class(pull(accel_data,day))` variable
-*_week_ is a `r class(pull(accel_data,week))` variable
-*_day_type_ is a `r class(pull(accel_data,day_type))` variable
-*_activity_min_ is a `r class(pull(accel_data,activity_min))` variable
-*_activity_count_ is a `r class(pull(accel_data,activity_count))` variable
+`day_id` is a `r class(pull(accel_data,day_id))` variable
+
+
+`day` is a `r class(pull(accel_data,day))` variable
+
+
+`week` is a `r class(pull(accel_data,week))` variable
+
+
+`day_type` is a `r class(pull(accel_data,day_type))` variable
+
+
+`activity_min` is a `r class(pull(accel_data,activity_min))` variable
+
+
+`activity_count` is a `r class(pull(accel_data,activity_count))` variable
 
 ```{r}
 accel_data %>%
@@ -147,14 +157,25 @@ from around 8pm to 10pm, especially on Fridays and Saturdays.
 ```{r}
 data("ny_noaa")
 ```
-The ny_noaa data set contains `r nrow(ny_noaa)` rows and `r ncol(ny_noaa)` columns.
-Some key varibales inlcudes:
-*`id`: weather station id
-*`prcp`: Precipitation (tenths of mm)
-*`snow`: snowfall(mm)
-*`snwd`: snow depth (mm)
-*`tmax`: maximum temperature  (tenths of degrees C)
-*`tmin`: minimum temperature (tenths of degrees C)
+The ny_noaa data set contains `r nrow(ny_noaa)` rows and `r ncol(ny_noaa)` 
+columns. Some key varibales inlcudes:
+
+`id`: weather station id
+
+
+`prcp`: Precipitation (tenths of mm)
+
+
+`snow`: snowfall(mm)
+
+
+`snwd`: snow depth (mm)
+
+
+`tmax`: maximum temperature  (tenths of degrees C)
+
+
+`tmin`: minimum temperature (tenths of degrees C)
 
 All variables were converted into standard units. `prcp`, was measured in tenths
 of mm, and was converted into mm.
@@ -173,11 +194,11 @@ missing_noaa
 
 ```
  From the table, it is observed that there is quite a lot of missing data for 
- `tamx` and `tmin`. tmax has about `r sum(is.na(ny_noaa$tmax))/nrow(ny_noaa)`% of 
- missing values, and missing values foe tmin accounts approximately for 
- `r sum(is.na(ny_noaa$tmin))/nrow(ny_noaa)`%. `snow` and `snwd` has relatively 
+ `tamx` and `tmin`. tmax has about `r round(sum(is.na(ny_noaa$tmax))/nrow(ny_noaa),2)*100`% of 
+ missing values, and missing values for tmin accounts approximately for 
+ `r round(sum(is.na(ny_noaa$tmin))/nrow(ny_noaa),2)*100`%. `snow` and `snwd` has relatively 
  smaller proportion of missing values. If the data set has a large amount of 
- missing values, it will casue bias, and could influence the accuracr for analysis.
+ missing values, it will casue bias, and could influence the accuracy for analysis.
  
 ```{r}
 ny_data= ny_noaa %>%
@@ -206,21 +227,19 @@ commonly observed value for snowfall is 0, which means that most days in nyc, it
 is not snowing. Since snowy days only occur in some winter days.
  
 ```{r}
-month_plot= 
-    ny_data %>%
-  filter(month=='01'|month=='07') %>%
+ 
+  ny_data %>%
+  filter(month==01|month==07) %>%
   drop_na(tmax) %>%
   group_by(year,id,month) %>%
   summarize(tmax_average=mean(tmax)) %>%
-  ggplot(aes(x=year,y=tmax_average,color=month)) +geom_point(alpha=0.3)+
-  facet_grid(.~month)+labs(
+  ggplot(aes(x=year,y=tmax_average,color=month)) + geom_point(alpha=0.3) +
+  facet_grid(. ~ month)+labs(
     title = "Avg Max Temp in January and July in each NY Station Across Years",
     x = "Year",
-    y = "Temp (°C)",
-    caption = "Data from the NOAA dataset"
-  )+theme(axis.text.x = element_text(angle = 60, hjust = 1))
+    y = "Temp (°C)")+theme(axis.text.x = element_text(angle = 60, hjust = 1))
 
-month_plot
+
 ```
 The average max temperature in January is within -10 to 10°C. The lowest turns 
 out to be about -13.5°C. There is no significant outliers in January.
