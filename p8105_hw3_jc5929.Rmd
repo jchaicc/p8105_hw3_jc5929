@@ -198,7 +198,7 @@ missing_noaa
  missing values, and missing values for tmin accounts approximately for 
  `r round(sum(is.na(ny_noaa$tmin))/nrow(ny_noaa),2)*100`%. `snow` and `snwd` has relatively 
  smaller proportion of missing values. If the data set has a large amount of 
- missing values, it will casue bias, and could influence the accuracy for analysis.
+ missing values, it will cause bias, and could influence the accuracy for analysis.
  
 ```{r}
 ny_data= ny_noaa %>%
@@ -247,7 +247,7 @@ out to be about -13.5°C. There is no significant outliers in January.
 Average max temperature in July appears to be 25-30°C. There is one outlier where
 the max temoerature is about 14°C. 
 
-Comparing January and JUly, the average max temperature is lower than in July. 
+Comparing January and July, the average max temperature is lower than in July. 
 It also appear to to fluctuate more in January, as the range in Junuary is more
 taller than in July.
 
